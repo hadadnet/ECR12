@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שאלון ECR-12</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f4f0; color: #1a1a1a; min-height: 100vh; }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 2rem 1rem; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .sub { font-size: 14px; color: #555; margin-bottom: 1.5rem; line-height: 1.6; }
+  .card { background: #fff; border-radius: 14px; padding: 1.5rem; margin-bottom: 1rem; border: 1px solid #e8e6e0; }
+  .anon-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: #2d7a4f; background: #e8f5ee; padding: 6px 14px; border-radius: 20px; margin-bottom: 1.5rem; font-weight: 500; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #2d7a4f; }
+  .progress-bar { height: 5px; background: #e8e6e0; border-radius: 3px; margin-bottom: 1.75rem; overflow: hidden; }
+  .progress-fill { height: 100%; background: #1a5fa8; border-radius: 3px; transition: width 0.3s; }
+  .q-num { font-size: 12px; font-weight: 600; color: #1a5fa8; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .q-tag { display: inline-block; font-size: 11px; padding: 2px 9px; border-radius: 20px; margin-bottom: 10px; font-weight: 500; }
+  .tag-avoid { background: #fdeee8; color: #8b3520; }
+  .tag-anx { background: #e6f0fb; color: #1a5fa8; }
+  .q-text { font-size: 17px; line-height: 1.65; margin-bottom: 1.5rem; }
+  .scale-labels { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-bottom: 8px; }
+  .options { display: flex; gap: 6px; }
+  .opt { flex: 1; padding: 11px 4px; border: 1.5px solid #e0ddd7; border-radius: 10px; background: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.15s; text-align: center; color: #1a1a1a; }
+  .opt:hover { background: #f5f4f0; border-color: #bbb; }
+  .opt.sel { background: #e6f0fb; border-color: #1a5fa8; color: #1a5fa8; }
+  .opt-lbl { font-size: 9px; color: #999; display: block; margin-top: 3px; font-weight: 400; }
+  .opt.sel .opt-lbl { color: #1a5fa8; }
+  .nav { display: flex; gap: 8px; margin-top: 1.5rem; }
+  .btn { padding: 11px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: 1.5px solid #ccc; background: #fff; color: #1a1a1a; transition: all 0.15s; }
+  .btn:hover { background: #f5f4f0; }
+  .btn.primary { background: #1a5fa8; color: #fff; border-color: #1a5fa8; }
+  .btn.primary:hover { background: #144e8a; }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .stat { background: #f5f4f0; border-radius: 10px; padding: 14px; text-align: center; }
+  .stat-lbl { font-size: 11px; color: #777; margin-bottom: 5px; }
+  .stat-val { font-size: 24px; font-weight: 600; }
+  .q-row { display: flex; align-items: center; padding: 9px 0; border-bottom: 1px solid #f0ede8; font-size: 13px; gap: 8px; }
+  .q-row:last-child { border-bottom: none; }
+  .bar-wrap { flex: 1; height: 6px; background: #ede9e0; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+  .result-style { display: inline-block; font-size: 13px; padding: 3px 12px; border-radius: 20px; font-weight: 600; }
+  .pw-wrap { display: flex; gap: 8px; margin-bottom: 8px; }
+  .pw-input { flex: 1; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 14px; background: #fff; }
+  .pw-input:focus { outline: none; border-color: #1a5fa8; }
+  .err { font-size: 13px; color: #8b1f1f; margin-top: 4px; min-height: 18px; }
+  .loading { text-align: center; padding: 2rem; color: #aaa; font-size: 15px; }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid #e0ddd7; border-top-color: #1a5fa8; border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 10px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- דף בית -->
+<div id="screen-home" class="screen active">
+  <h1>שאלון ECR-12</h1>
+  <p class="sub">שאלון לבדיקת סגנון ההתקשרות הרגשית בזוגיות.</p>
+  <div class="anon-badge"><div class="dot"></div>השאלון אנונימי לחלוטין — לא נשמר שום פרט מזהה</div>
+  <div class="card">
+    <h2>12 שאלות · כ-3 דקות</h2>
+    <p class="sub">דרג/י כל משפט בסולם 1 (לא מסכים/ה בכלל) עד 7 (מסכים/ה מאוד)</p>
+    <button class="btn primary" onclick="startQ()" style="width:100%">התחל/י את השאלון ←</button>
+  </div>
+  <div class="card">
+    <h2>ממשק מנהל</h2>
+    <p class="sub" style="margin-bottom:1rem">צפייה בממוצעי הקבוצה. מוגן בסיסמה.</p>
+    <div class="pw-wrap">
+      <input class="pw-input" id="pw-input" type="password" placeholder="סיסמת מנהל..." onkeydown="if(event.key==='Enter')checkPw()" />
+      <button class="btn primary" onclick="checkPw()">כניסה</button>
+    </div>
+    <div class="err" id="pw-err"></div>
+    <p style="font-size:12px;color:#bbb;margin-top:6px">סיסמת ברירת מחדל: <strong>admin123</strong></p>
+  </div>
+</div>
+
+<!-- שאלון -->
+<div id="screen-q" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+  <div id="q-box"></div>
+  <div class="nav">
+    <button class="btn" id="btn-prev" onclick="prevQ()" disabled>→ הקודם</button>
+    <button class="btn primary" id="btn-next" onclick="nextQ()">הבא ←</button>
+  </div>
+</div>
+
+<!-- שמירה -->
+<div id="screen-saving" class="screen">
+  <div class="card" style="text-align:center;padding:3rem 1.5rem">
+    <div class="spinner"></div>
+    <p style="font-size:16px;color:#555;margin-top:10px">שומר את תשובותיך...</p>
+  </div>
+</div>
+
+<!-- סיום -->
+<div id="screen-done" class="screen">
+  <h1>תודה!</h1>
+  <p class="sub">תשובותיך נשמרו בצורה אנונימית.</p>
+  <div class="card" id="result-box"></div>
+  <button class="btn primary" onclick="go('screen-home')" style="width:100%">חזרה לדף הבית</button>
+</div>
+
+<!-- מנהל -->
+<div id="screen-admin" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+    <button class="btn" onclick="go('screen-home')" style="font-size:13px;padding:7px 14px">→ חזרה</button>
+    <h1 style="margin:0">תוצאות הקבוצה</h1>
+    <button class="btn" onclick="showAdmin()" style="font-size:12px;padding:7px 14px;margin-right:auto">רענן ↻</button>
+  </div>
+  <div class="anon-badge"><div class="dot"></div>כל הנתונים אנונימיים — מסד נתונים מרכזי</div>
+  <div id="admin-content">
+    <div class="loading"><div class="spinner"></div><br>טוען נתונים...</div>
+  </div>
+</div>
+
+</div>
+<script>
+const SUPABASE_URL = 'https://fsastcfpkdueuljlgwmi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzYXN0Y2Zwa2R1ZXVsamxnd21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MDQzNDIsImV4cCI6MjA5MzM4MDM0Mn0.FoFksqlAwZfHcGopYfSFfkSSh5OYlTatAbJ28GfXilk';
+const ADMIN_PW = 'admin123';
+
+const ITEMS = [
+  {text:"אני מעדיפ/ה לא להראות לבן/בת הזוג שלי את רגשותיי.",sub:"הימנעות",rev:false},
+  {text:"אני חושש/ת שאנשים קרובים לא אוהבים אותי כמו שאני אוהב/ת אותם.",sub:"חרדה",rev:false},
+  {text:"אני מעדיפ/ה לא להיות קרוב/ה רגשית לבן/בת הזוג שלי.",sub:"הימנעות",rev:false},
+  {text:"אני דואג/ת רבות לגבי הקשרים שלי.",sub:"חרדה",rev:false},
+  {text:"נוח לי לשתף את בן/בת הזוג שלי ברגשותיי ובמחשבותיי.",sub:"הימנעות",rev:true},
+  {text:"לפעמים אני מרגיש/ה שאני רוצה יותר קרבה ממה שבן/בת הזוג שלי נותן/ת לי.",sub:"חרדה",rev:false},
+  {text:"אני מנסה להימנע מלהתקרב יותר מדי לבן/בת הזוג שלי.",sub:"הימנעות",rev:false},
+  {text:"אני חושש/ת שאאבד את אהבתו/ה של בן/בת הזוג שלי.",sub:"חרדה",rev:false},
+  {text:"קל לי לסמוך על בן/בת הזוג שלי.",sub:"הימנעות",rev:true},
+  {text:"לפעמים בן/בת הזוג שלי משנה את רגשותיו/ה כלפיי ללא סיבה.",sub:"חרדה",rev:false},
+  {text:"לעיתים קרובות אני רוצה להיות קרוב/ה לבן/בת הזוג שלי.",sub:"הימנעות",rev:true},
+  {text:"לעיתים קרובות אני חרד/ה מכך שבן/בת הזוג שלי לא רוצה להיות יחד איתי.",sub:"חרדה",rev:false}
+];
+
+let answers = {}, cur = 0;
+
+async function dbInsert(row) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/ecr12_responses`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(row)
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+async function dbFetch() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/ecr12_responses?select=scores,avoidance,anxiety`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+function startQ() { answers = {}; cur = 0; renderQ(); go('screen-q'); }
+
+function renderQ() {
+  const item = ITEMS[cur];
+  document.getElementById('prog').style.width = Math.round(cur / ITEMS.length * 100) + '%';
+  const sel = answers[cur] || null;
+  let opts = '';
+  for (let v = 1; v <= 7; v++) {
+    const lbl = v === 1 ? '<span class="opt-lbl">לא מסכים/ה<br>בכלל</span>' : v === 7 ? '<span class="opt-lbl">מסכים/ה<br>מאוד</span>' : '';
+    opts += `<button class="opt${sel === v ? ' sel' : ''}" onclick="pick(${v})">${v}${lbl}</button>`;
+  }
+  document.getElementById('q-box').innerHTML = `
+    <div class="card">
+      <div class="q-num">שאלה ${cur + 1} מתוך ${ITEMS.length}</div>
+      <div><span class="q-tag ${item.sub === 'הימנעות' ? 'tag-avoid' : 'tag-anx'}">${item.sub}</span></div>
+      <div class="q-text">${item.text}</div>
+      <div class="scale-labels"><span>לא מסכים/ה בכלל</span><span>מסכים/ה מאוד</span></div>
+      <div class="options">${opts}</div>
+    </div>`;
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').textContent = cur === ITEMS.length - 1 ? 'סיים ←' : 'הבא ←';
+}
+
+function pick(v) { answers[cur] = v; renderQ(); }
+
+function nextQ() {
+  if (!answers[cur]) { alert('אנא בחר/י תשובה'); return; }
+  if (cur < ITEMS.length - 1) { cur++; renderQ(); }
+  else submit();
+}
+function prevQ() { if (cur > 0) { cur--; renderQ(); } }
+
+async function submit() {
+  go('screen-saving');
+  let sc = {};
+  ITEMS.forEach((it, i) => { let v = answers[i]; if (it.rev) v = 8 - v; sc[i] = v; });
+  const avI = ITEMS.map((it, i) => it.sub === 'הימנעות' ? i : -1).filter(x => x >= 0);
+  const axI = ITEMS.map((it, i) => it.sub === 'חרדה' ? i : -1).filter(x => x >= 0);
+  const av = avI.reduce((s, i) => s + sc[i], 0) / avI.length;
+  const ax = axI.reduce((s, i) => s + sc[i], 0) / axI.length;
+  try {
+    await dbInsert({ scores: sc, avoidance: +av.toFixed(2), anxiety: +ax.toFixed(2) });
+  } catch (e) {
+    alert('שגיאה בשמירת הנתונים. נסה שוב.');
+    go('screen-q'); return;
+  }
+  let stl, stlCss;
+  if (av < 3 && ax < 3) { stl = 'סגנון בטוח'; stlCss = 'background:#e8f5ee;color:#2d7a4f'; }
+  else if (av >= 3 && ax < 3) { stl = 'סגנון נמנע'; stlCss = 'background:#fdeee8;color:#8b3520'; }
+  else if (av < 3 && ax >= 3) { stl = 'סגנון חרד'; stlCss = 'background:#e6f0fb;color:#1a5fa8'; }
+  else { stl = 'סגנון חרד-נמנע'; stlCss = 'background:#fdf3e0;color:#7a4f10'; }
+  document.getElementById('result-box').innerHTML = `
+    <h2 style="margin-bottom:12px">התוצאה שלך <span class="result-style" style="${stlCss}">${stl}</span></h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-lbl">ציון הימנעות</div><div class="stat-val">${av.toFixed(1)}</div></div>
+      <div class="stat"><div class="stat-lbl">ציון חרדה</div><div class="stat-val">${ax.toFixed(1)}</div></div>
+      <div class="stat"><div class="stat-lbl">סולם</div><div class="stat-val">1–7</div></div>
+    </div>
+    <p style="font-size:13px;color:#777;margin-top:10px">ציון 1–3 נמוך · 3–5 בינוני · 5–7 גבוה</p>`;
+  go('screen-done');
+}
+
+function checkPw() {
+  if (document.getElementById('pw-input').value === ADMIN_PW) {
+    document.getElementById('pw-err').textContent = '';
+    showAdmin();
+  } else {
+    document.getElementById('pw-err').textContent = 'סיסמה שגויה';
+  }
+}
+
+async function showAdmin() {
+  go('screen-admin');
+  document.getElementById('admin-content').innerHTML = '<div class="loading"><div class="spinner"></div><br>טוען נתונים...</div>';
+  let data;
+  try { data = await dbFetch(); } catch (e) {
+    document.getElementById('admin-content').innerHTML = '<div class="card" style="color:#8b1f1f">שגיאה בטעינת הנתונים.</div>';
+    return;
+  }
+  const n = data.length;
+  if (n === 0) {
+    document.getElementById('admin-content').innerHTML = `
+      <div class="stat-grid">
+        <div class="stat"><div class="stat-lbl">מספר משיבים</div><div class="stat-val">0</div></div>
+        <div class="stat"><div class="stat-lbl">הימנעות ממוצע</div><div class="stat-val">—</div></div>
+        <div class="stat"><div class="stat-lbl">חרדה ממוצע</div><div class="stat-val">—</div></div>
+      </div>
+      <div class="card"><p style="color:#aaa;font-size:14px">טרם נאספו תשובות</p></div>`;
+    return;
+  }
+  const av = data.reduce((s, r) => s + r.avoidance, 0) / n;
+  const ax = data.reduce((s, r) => s + r.anxiety, 0) / n;
+  let qHTML = '';
+  ITEMS.forEach((item, i) => {
+    const avg = data.reduce((s, r) => s + (r.scores[i] || 0), 0) / n;
+    const pct = ((avg - 1) / 6) * 100;
+    const col = item.sub === 'הימנעות' ? '#c4541e' : '#1a5fa8';
+    qHTML += `<div class="q-row">
+      <span style="font-size:12px;color:#aaa;min-width:22px">${i + 1}.</span>
+      <span style="min-width:60px;font-size:12px;color:#555">${item.sub}</span>
+      <div class="bar-wrap"><div class="bar-fill" style="width:${pct.toFixed(0)}%;background:${col}"></div></div>
+      <span style="font-weight:600;min-width:32px;text-align:left">${avg.toFixed(1)}</span>
+    </div>`;
+  });
+  document.getElementById('admin-content').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-lbl">מספר משיבים</div><div class="stat-val">${n}</div></div>
+      <div class="stat"><div class="stat-lbl">הימנעות ממוצע</div><div class="stat-val">${av.toFixed(2)}</div></div>
+      <div class="stat"><div class="stat-lbl">חרדה ממוצע</div><div class="stat-val">${ax.toFixed(2)}</div></div>
+    </div>
+    <div class="card">
+      <h2 style="margin-bottom:14px">ממוצע לפי שאלה</h2>
+      ${qHTML}
+    </div>`;
+}
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
