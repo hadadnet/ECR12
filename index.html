@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -111,6 +112,7 @@
     <button class="btn" onclick="go('screen-home')" style="font-size:13px;padding:7px 14px">→ חזרה</button>
     <h1 style="margin:0">תוצאות הקבוצה</h1>
     <button class="btn" onclick="showAdmin()" style="font-size:12px;padding:7px 14px;margin-right:auto">רענן ↻</button>
+    <button class="btn" onclick="resetData()" style="font-size:12px;padding:7px 14px;color:#8b1f1f;border-color:#e0a0a0">איפוס קבוצה 🗑</button>
   </div>
   <div class="anon-badge"><div class="dot"></div>כל הנתונים אנונימיים — מסד נתונים מרכזי</div>
   <div id="admin-content">
@@ -280,6 +282,19 @@ async function showAdmin() {
       <h2 style="margin-bottom:14px">ממוצע לפי שאלה</h2>
       ${qHTML}
     </div>`;
+}
+
+async function resetData() {
+  if (!confirm('למחוק את כל תשובות הקבוצה הנוכחית? פעולה זו בלתי הפיכה.')) return;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/ecr12_responses?id=neq.00000000-0000-0000-0000-000000000000`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  if (res.ok) { alert('✅ הקבוצה אופסה בהצלחה!'); showAdmin(); }
+  else { alert('שגיאה באיפוס. נסה שוב.'); }
 }
 
 function go(id) {
